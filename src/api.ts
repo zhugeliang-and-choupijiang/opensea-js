@@ -196,15 +196,9 @@ export class OpenSeaAPI {
     retries = 1
   ): Promise<OpenSeaAsset> {
     let json
-    try {
-      json = await this.get(
-        `${API_PATH}/asset/${tokenAddress}/${tokenId || 0}/`
-      )
-    } catch (error) {
-      _throwOrContinue(error as Error, retries)
-      await delay(1000)
-      return this.getAsset({ tokenAddress, tokenId }, retries - 1)
-    }
+    json = await this.get(
+      `${API_PATH}/asset/${tokenAddress}/${tokenId || 0}/`
+    )
 
     return assetFromJSON(json)
   }
@@ -244,17 +238,11 @@ export class OpenSeaAPI {
     retries = 1
   ): Promise<{ tokens: OpenSeaFungibleToken[] }> {
     let json
-    try {
-      json = await this.get(`${API_PATH}/tokens/`, {
-        ...query,
-        limit: this.pageSize,
-        offset: (page - 1) * this.pageSize,
-      })
-    } catch (error) {
-      _throwOrContinue(error as Error, retries)
-      await delay(1000)
-      return this.getPaymentTokens(query, page, retries - 1)
-    }
+    json = await this.get(`${API_PATH}/tokens/`, {
+      ...query,
+      limit: this.pageSize,
+      offset: (page - 1) * this.pageSize,
+    })
 
     return {
       tokens: json.map((t: any) => tokenFromJSON(t)),
@@ -302,12 +290,18 @@ export class OpenSeaAPI {
    * @param apiPath Path to URL endpoint under API
    * @param query Data to send. Will be stringified using QueryString
    */
-  public async get(apiPath: string, query: object = {}): Promise<any> {
+  public async get(apiPath: string, query: object = {}, retries = 1): Promise<any> {
     const qs = QueryString.stringify(query)
     const url = `${apiPath}?${qs}`
 
-    const response = await this._fetch(url)
-    return response.json()
+    try {
+      const response = await this._fetch(url)
+      return response.json()
+    } catch (error) {
+      _throwOrContinue(error as Error, retries)
+      await delay(1000)
+      return await this.get(apiPath, query, retries - 1)
+    }
   }
 
   /**

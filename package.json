@@ -52,11 +52,6 @@
     "wyvern-js": "git+https://github.com/ProjectOpenSea/wyvern-js.git#v3.2.1",
     "wyvern-schemas": "git+https://github.com/ProjectOpenSea/wyvern-schemas.git#v0.11.1"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint && npm run build && git add lib/*"
-    }
-  },
   "devDependencies": {
     "@types/chai": "4.2.9",
     "@types/fbemitter": "^2.0.32",

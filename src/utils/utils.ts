@@ -161,7 +161,7 @@ export async function promisifyCall<T>(
   } catch (error) {
     // Probably method not found, and web3 is a Parity node
     if (onError) {
-      onError(error)
+      onError(error as Error)
     } else {
       console.error(error)
     }
@@ -601,7 +601,7 @@ export async function sendRawTransaction(
     )
     return txHashRes.toString()
   } catch (error) {
-    onError(error)
+    onError(error as Error)
     throw error
   }
 }
@@ -636,7 +636,7 @@ export async function rawCall(
   } catch (error) {
     // Probably method not found, and web3 is a Parity node
     if (onError) {
-      onError(error)
+      onError(error as Error)
     }
     // Backwards compatibility with Geth nodes
     return "0x"

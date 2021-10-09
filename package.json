@@ -1,6 +1,6 @@
 {
   "name": "@timicool/opensea-js",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "JavaScript SDK for the OpenSea marketplace. Let users buy or sell crypto collectibles and other cryptogoods, all on your own site!",
   "files": [
     "lib",
@@ -51,6 +51,11 @@
     "webpack": "^3.10.0",
     "wyvern-js": "git+https://github.com/ProjectOpenSea/wyvern-js.git#v3.2.1",
     "wyvern-schemas": "git+https://github.com/ProjectOpenSea/wyvern-schemas.git#v0.11.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint && npm run build && git add lib/*"
+    }
   },
   "devDependencies": {
     "@types/chai": "4.2.9",

@@ -1,5 +1,5 @@
-import 'isomorphic-unfetch'
-import * as QueryString from 'query-string'
+import "isomorphic-unfetch"
+import * as QueryString from "query-string"
 import {
   Network,
   OpenSeaAPIConfig,
@@ -12,15 +12,15 @@ import {
   Order,
   OrderbookResponse,
   OrderJSON,
-  OrderQuery
-} from './types'
+  OrderQuery,
+} from "./types"
 import {
   assetBundleFromJSON,
   assetFromJSON,
   delay,
   orderFromJSON,
-  tokenFromJSON
-} from './utils/utils'
+  tokenFromJSON,
+} from "./utils/utils"
 import {
   API_BASE_MAINNET,
   API_BASE_RINKEBY,
@@ -28,11 +28,10 @@ import {
   ORDERBOOK_PATH,
   ORDERBOOK_VERSION,
   SITE_HOST_MAINNET,
-  SITE_HOST_RINKEBY
-} from './constants'
+  SITE_HOST_RINKEBY,
+} from "./constants"
 
 export class OpenSeaAPI {
-
   /**
    * Host url for OpenSea
    */
@@ -86,9 +85,12 @@ export class OpenSeaAPI {
   public async postOrder(order: OrderJSON, retries = 2): Promise<Order> {
     let json
     try {
-      json = await this.post(`${ORDERBOOK_PATH}/orders/post/`, order) as OrderJSON
+      json = (await this.post(
+        `${ORDERBOOK_PATH}/orders/post/`,
+        order
+      )) as OrderJSON
     } catch (error) {
-      _throwOrContinue(error, retries)
+      _throwOrContinue(error as Error, retries)
       await delay(3000)
       return this.postOrder(order, retries - 1)
     }
@@ -105,14 +107,16 @@ export class OpenSeaAPI {
    * @param email The email allowed to buy.
    */
   public async postAssetWhitelist(
-      tokenAddress: string,
-      tokenId: string | number,
-      email: string
-    ): Promise<boolean> {
-
-    const json = await this.post(`${API_PATH}/asset/${tokenAddress}/${tokenId}/whitelist/`, {
-      email
-    })
+    tokenAddress: string,
+    tokenId: string | number,
+    email: string
+  ): Promise<boolean> {
+    const json = await this.post(
+      `${API_PATH}/asset/${tokenAddress}/${tokenId}/whitelist/`,
+      {
+        email,
+      }
+    )
 
     return !!json.success
   }
@@ -123,13 +127,10 @@ export class OpenSeaAPI {
    *  on the `OrderJSON` type is supported
    */
   public async getOrder(query: OrderQuery): Promise<Order> {
-
-    const result = await this.get(
-      `${ORDERBOOK_PATH}/orders/`, {
-        limit: 1,
-        ...query
-      }
-    )
+    const result = await this.get(`${ORDERBOOK_PATH}/orders/`, {
+      limit: 1,
+      ...query,
+    })
 
     let orderJSON
     if (ORDERBOOK_VERSION == 0) {
@@ -154,30 +155,26 @@ export class OpenSeaAPI {
    * `limit` and `offset` attributes from OrderQuery
    */
   public async getOrders(
-      query: OrderQuery = {},
-      page = 1
-    ): Promise<{orders: Order[]; count: number}> {
-
-    const result = await this.get(
-      `${ORDERBOOK_PATH}/orders/`,
-      {
-        limit: this.pageSize,
-        offset: (page - 1) * this.pageSize,
-        ...query,
-      }
-    )
+    query: OrderQuery = {},
+    page = 1
+  ): Promise<{ orders: Order[]; count: number }> {
+    const result = await this.get(`${ORDERBOOK_PATH}/orders/`, {
+      limit: this.pageSize,
+      offset: (page - 1) * this.pageSize,
+      ...query,
+    })
 
     if (ORDERBOOK_VERSION == 0) {
       const json = result as OrderJSON[]
       return {
         orders: json.map(j => orderFromJSON(j)),
-        count: json.length
+        count: json.length,
       }
     } else {
       const json = result as OrderbookResponse
       return {
         orders: json.orders.map(j => orderFromJSON(j)),
-        count: json.count
+        count: json.count,
       }
     }
   }
@@ -188,20 +185,23 @@ export class OpenSeaAPI {
    * @param tokenId The asset's token ID, or null if ERC-20
    * @param retries Number of times to retry if the service is unavailable for any reason
    */
-  public async getAsset({
-      tokenAddress, tokenId
+  public async getAsset(
+    {
+      tokenAddress,
+      tokenId,
     }: {
-      tokenAddress: string,
-      tokenId: string | number | null,
+      tokenAddress: string;
+      tokenId: string | number | null;
     },
-                        retries = 1
-    ): Promise<OpenSeaAsset> {
-
+    retries = 1
+  ): Promise<OpenSeaAsset> {
     let json
     try {
-      json = await this.get(`${API_PATH}/asset/${tokenAddress}/${tokenId || 0}/`)
+      json = await this.get(
+        `${API_PATH}/asset/${tokenAddress}/${tokenId || 0}/`
+      )
     } catch (error) {
-      _throwOrContinue(error, retries)
+      _throwOrContinue(error as Error, retries)
       await delay(1000)
       return this.getAsset({ tokenAddress, tokenId }, retries - 1)
     }
@@ -216,19 +216,18 @@ export class OpenSeaAPI {
    * `limit` and `offset` attributes from OpenSeaAssetQuery
    */
   public async getAssets(
-      query: OpenSeaAssetQuery = {},
-      page = 1
-    ): Promise<{assets: OpenSeaAsset[]; estimatedCount: number}> {
-
+    query: OpenSeaAssetQuery = {},
+    page = 1
+  ): Promise<{ assets: OpenSeaAsset[]; estimatedCount: number }> {
     const json = await this.get(`${API_PATH}/assets/`, {
       limit: this.pageSize,
       offset: (page - 1) * this.pageSize,
-      ...query
+      ...query,
     })
 
     return {
       assets: json.assets.map((j: any) => assetFromJSON(j)),
-      estimatedCount: json.estimated_count
+      estimatedCount: json.estimated_count,
     }
   }
 
@@ -240,26 +239,25 @@ export class OpenSeaAPI {
    * @param retries Number of times to retry if the service is unavailable for any reason
    */
   public async getPaymentTokens(
-      query: OpenSeaFungibleTokenQuery = {},
-      page = 1,
-      retries = 1
-    ): Promise<{tokens: OpenSeaFungibleToken[]}> {
-
+    query: OpenSeaFungibleTokenQuery = {},
+    page = 1,
+    retries = 1
+  ): Promise<{ tokens: OpenSeaFungibleToken[] }> {
     let json
     try {
       json = await this.get(`${API_PATH}/tokens/`, {
         ...query,
         limit: this.pageSize,
-        offset: (page - 1) * this.pageSize
+        offset: (page - 1) * this.pageSize,
       })
     } catch (error) {
-      _throwOrContinue(error, retries)
+      _throwOrContinue(error as Error, retries)
       await delay(1000)
       return this.getPaymentTokens(query, page, retries - 1)
     }
 
     return {
-      tokens: json.map((t: any) => tokenFromJSON(t))
+      tokens: json.map((t: any) => tokenFromJSON(t)),
     }
   }
 
@@ -267,10 +265,11 @@ export class OpenSeaAPI {
    * Fetch an bundle from the API, return null if it isn't found
    * @param slug The bundle's identifier
    */
-  public async getBundle({ slug }: {
-      slug: string
-    }): Promise<OpenSeaAssetBundle | null> {
-
+  public async getBundle({
+    slug,
+  }: {
+    slug: string;
+  }): Promise<OpenSeaAssetBundle | null> {
     const json = await this.get(`${API_PATH}/bundle/${slug}/`)
 
     return json ? assetBundleFromJSON(json) : null
@@ -283,19 +282,18 @@ export class OpenSeaAPI {
    * `limit` and `offset` attributes from OpenSeaAssetBundleQuery
    */
   public async getBundles(
-      query: OpenSeaAssetBundleQuery = {},
-      page = 1
-    ): Promise<{bundles: OpenSeaAssetBundle[]; estimatedCount: number}> {
-
+    query: OpenSeaAssetBundleQuery = {},
+    page = 1
+  ): Promise<{ bundles: OpenSeaAssetBundle[]; estimatedCount: number }> {
     const json = await this.get(`${API_PATH}/bundles/`, {
       ...query,
       limit: this.pageSize,
-      offset: (page - 1) * this.pageSize
+      offset: (page - 1) * this.pageSize,
     })
 
     return {
       bundles: json.bundles.map((j: any) => assetBundleFromJSON(j)),
-      estimatedCount: json.estimated_count
+      estimatedCount: json.estimated_count,
     }
   }
 
@@ -305,7 +303,6 @@ export class OpenSeaAPI {
    * @param query Data to send. Will be stringified using QueryString
    */
   public async get(apiPath: string, query: object = {}): Promise<any> {
-
     const qs = QueryString.stringify(query)
     const url = `${apiPath}?${qs}`
 
@@ -320,16 +317,19 @@ export class OpenSeaAPI {
    * @param opts RequestInit opts, similar to Fetch API. If it contains
    *  a body, it won't be stringified.
    */
-  public async post(apiPath: string, body?: object, opts: RequestInit = {}): Promise<any> {
-
+  public async post(
+    apiPath: string,
+    body?: object,
+    opts: RequestInit = {}
+  ): Promise<any> {
     const fetchOpts = {
-      method: 'POST',
+      method: "POST",
       body: body ? JSON.stringify(body) : undefined,
       headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
-      ...opts
+      ...opts,
     }
 
     const response = await this._fetch(apiPath, fetchOpts)
@@ -344,10 +344,9 @@ export class OpenSeaAPI {
    *  a body, it won't be stringified.
    */
   public async put(apiPath: string, body: object, opts: RequestInit = {}) {
-
     return this.post(apiPath, body, {
-      method: 'PUT',
-      ...opts
+      method: "PUT",
+      ...opts,
     })
   }
 
@@ -357,21 +356,27 @@ export class OpenSeaAPI {
    * @param opts RequestInit opts, similar to Fetch API
    */
   private async _fetch(apiPath: string, opts: RequestInit = {}) {
-
     const apiBase = this.apiBaseUrl
     const apiKey = this.apiKey
     const finalUrl = apiBase + apiPath
     const finalOpts = {
       ...opts,
       headers: {
-        ...(apiKey ? { 'X-API-KEY': apiKey } : {}),
+        ...(apiKey ? { "X-API-KEY": apiKey } : {}),
         ...(opts.headers || {}),
-      }
+      },
     }
 
-    this.logger(`Sending request: ${finalUrl} ${JSON.stringify(finalOpts).substr(0, 100)}...`)
+    this.logger(
+      `Sending request: ${finalUrl} ${JSON.stringify(finalOpts).substr(
+        0,
+        100
+      )}...`
+    )
 
-    return fetch(finalUrl, finalOpts).then(async res => this._handleApiResponse(res))
+    return fetch(finalUrl, finalOpts).then(async res =>
+      this._handleApiResponse(res)
+    )
   }
 
   private async _handleApiResponse(response: Response) {
@@ -393,22 +398,31 @@ export class OpenSeaAPI {
 
     switch (response.status) {
       case 400:
-        errorMessage = result && result.errors
-          ? result.errors.join(', ')
-          : `Invalid request: ${JSON.stringify(result)}`
+        errorMessage =
+          result && result.errors
+            ? result.errors.join(", ")
+            : `Invalid request: ${JSON.stringify(result)}`
         break
       case 401:
       case 403:
-        errorMessage = `Unauthorized. Full message was '${JSON.stringify(result)}'`
+        errorMessage = `Unauthorized. Full message was '${JSON.stringify(
+          result
+        )}'`
         break
       case 404:
-        errorMessage = `Not found. Full message was '${JSON.stringify(result)}'`
+        errorMessage = `Not found. Full message was '${JSON.stringify(
+          result
+        )}'`
         break
       case 500:
-        errorMessage = `Internal server error. OpenSea has been alerted, but if the problem persists please contact us via Discord: https://discord.gg/ga8EJbv - full message was ${JSON.stringify(result)}`
+        errorMessage = `Internal server error. OpenSea has been alerted, but if the problem persists please contact us via Discord: https://discord.gg/ga8EJbv - full message was ${JSON.stringify(
+          result
+        )}`
         break
       case 503:
-        errorMessage = `Service unavailable. Please try again in a few minutes. If the problem persists please contact us via Discord: https://discord.gg/ga8EJbv - full message was ${JSON.stringify(result)}`
+        errorMessage = `Service unavailable. Please try again in a few minutes. If the problem persists please contact us via Discord: https://discord.gg/ga8EJbv - full message was ${JSON.stringify(
+          result
+        )}`
         break
       default:
         errorMessage = `Message: ${JSON.stringify(result)}`
@@ -420,10 +434,9 @@ export class OpenSeaAPI {
 }
 
 function _throwOrContinue(error: Error, retries: number) {
-  const isUnavailable = !!error.message && (
-    error.message.includes('503') ||
-    error.message.includes('429')
-  )
+  const isUnavailable =
+    !!error.message &&
+    (error.message.includes("503") || error.message.includes("429"))
   if (retries <= 0 || !isUnavailable) {
     throw error
   }

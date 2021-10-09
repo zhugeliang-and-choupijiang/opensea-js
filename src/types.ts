@@ -1,20 +1,16 @@
-import BigNumber from 'bignumber.js'
-import * as Web3 from 'web3'
+import BigNumber from "bignumber.js"
+import * as Web3 from "web3"
 import {
   Network,
   HowToCall,
   // Note: Wyvern SaleKind is wrong!
   ECSignature,
-  Order as WyvernOrder
-} from 'wyvern-js/lib/types'
+  Order as WyvernOrder,
+} from "wyvern-js/lib/types"
 
-import { Token } from 'wyvern-schemas/dist/types'
+import { Token } from "wyvern-schemas/dist/types"
 
-export {
-  Network,
-  HowToCall,
-  ECSignature
-}
+export { Network, HowToCall, ECSignature }
 
 /**
  * Events emitted by the SDK. There are five types:
@@ -136,19 +132,19 @@ export enum SaleKind {
  * Given by the asset_contract_type in the OpenSea API
  */
 export enum AssetContractType {
-  Fungible = 'fungible',
-  SemiFungible = 'semi-fungible',
-  NonFungible = 'non-fungible',
-  Unknown = 'unknown',
+  Fungible = "fungible",
+  SemiFungible = "semi-fungible",
+  NonFungible = "non-fungible",
+  Unknown = "unknown",
 }
 
 // Wyvern Schemas (see https://github.com/ProjectOpenSea/wyvern-schemas)
 export enum WyvernSchemaName {
-  ERC20 = 'ERC20',
-  ERC721 = 'ERC721',
-  ERC1155 = 'ERC1155',
-  LegacyEnjin = 'Enjin',
-  ENSShortNameAuction = 'ENSShortNameAuction',
+  ERC20 = "ERC20",
+  ERC721 = "ERC721",
+  ERC1155 = "ERC1155",
+  LegacyEnjin = "Enjin",
+  ENSShortNameAuction = "ENSShortNameAuction",
   // CryptoPunks = 'CryptoPunks'
 }
 
@@ -165,18 +161,18 @@ export enum WyvernSchemaName {
  * locked: When the transfer function has been locked by the dev
  */
 export enum TokenStandardVersion {
-  Unsupported = 'unsupported',
-  Locked = 'locked',
-  Enjin = '1155-1.0',
-  ERC721v1 = '1.0',
-  ERC721v2 = '2.0',
-  ERC721v3 = '3.0',
+  Unsupported = "unsupported",
+  Locked = "locked",
+  Enjin = "1155-1.0",
+  ERC721v1 = "1.0",
+  ERC721v2 = "2.0",
+  ERC721v3 = "3.0",
 }
 
 export enum WyvernAssetLocation {
-  Account = 'account',
-  Proxy = 'proxy',
-  Other = 'other'
+  Account = "account",
+  Proxy = "proxy",
+  Other = "other",
 }
 
 export interface WyvernNFTAsset {
@@ -199,7 +195,19 @@ export interface WyvernBundle {
   external_link?: string
 }
 
-export type WyvernAtomicMatchParameters = [string[], BigNumber[], Array<(number | BigNumber)>, string, string, string, string, string, string, Array<(number | BigNumber)>, string[]]
+export type WyvernAtomicMatchParameters = [
+  string[],
+  BigNumber[],
+  Array<number | BigNumber>,
+  string,
+  string,
+  string,
+  string,
+  string,
+  string,
+  Array<number | BigNumber>,
+  string[]
+]
 
 /**
  * The OpenSea account object appended to orders, providing extra metadata, profile images and usernames
@@ -227,15 +235,15 @@ export interface OpenSeaUser {
  */
 export interface Asset {
   // The asset's token ID, or null if ERC-20
-  tokenId: string | null,
+  tokenId: string | null
   // The asset's contract address
-  tokenAddress: string,
+  tokenAddress: string
   // The Wyvern schema name (e.g. "ERC721") for this asset
-  schemaName?: WyvernSchemaName,
+  schemaName?: WyvernSchemaName
   // The token standard version of this asset
-  version?: TokenStandardVersion,
+  version?: TokenStandardVersion
   // Optional for ENS names
-  name?: string,
+  name?: string
   // Optional for fungible items
   decimals?: number
 }
@@ -275,12 +283,12 @@ export interface OpenSeaAssetContract extends OpenSeaFees {
 }
 
 interface NumericalTraitStats {
-  min: number,
+  min: number
   max: number
 }
 
 interface StringTraitStats {
-  [key: string]: number,
+  [key: string]: number
 }
 
 /**
@@ -298,7 +306,7 @@ export interface OpenSeaCollection extends OpenSeaFees {
   // Whether this collection is featured
   featured: boolean
   // Date collection was created
-  createdDate: Date,
+  createdDate: Date
 
   // Description of the collection
   description: string
@@ -311,13 +319,13 @@ export interface OpenSeaCollection extends OpenSeaFees {
   // Object with stats about the collection
   stats: object
   // Data about displaying cards
-  displayData: object,
+  displayData: object
   // Tokens allowed for this collection
   paymentTokens: OpenSeaFungibleToken[]
   // Address for dev fee payouts
-  payoutAddress?: string,
+  payoutAddress?: string
   // Array of trait types for the collection
-  traitStats: OpenSeaTraitStats,
+  traitStats: OpenSeaTraitStats
   // Link to the collection's main website
   externalLink?: string
   // Link to the collection's wiki, if available
@@ -358,20 +366,22 @@ export interface OpenSeaAsset extends Asset {
   imageUrlOriginal: string
   // Thumbnail url for this token
   imageUrlThumbnail: string
+  // The original image url for this token, add to show image url
+  imageBaseUrl: string
   // Link to token on OpenSea
   openseaLink: string
   // Link to token on dapp's site
   externalLink: string
   // Array of traits on this token
-  traits: object[],
+  traits: object[]
   // Number of times this token has been traded (sold)
   numSales: number
   // Data about the last time this token was sold
   lastSale: AssetEvent | null
   // The suggested background color for the image url
-  backgroundColor: string | null,
+  backgroundColor: string | null
   // The per-transfer fee, in base units, for this asset in its transfer method
-  transferFee: BigNumber | string | null,
+  transferFee: BigNumber | string | null
   // The transfer fee token for this asset in its transfer method
   transferFeePaymentToken: OpenSeaFungibleToken | null
 }
@@ -380,7 +390,6 @@ export interface OpenSeaAsset extends Asset {
  * Defines a AssetEvent type which contains details about an event that occurred
  */
 export interface AssetEvent {
-
   // The type of event
   eventType: AssetEventType
 
@@ -404,26 +413,26 @@ export interface AssetEvent {
  * Defines set of possible auctions types
  */
 export enum AuctionType {
-  Dutch = 'dutch',
-  English = 'english',
-  MinPrice = 'min_price',
+  Dutch = "dutch",
+  English = "english",
+  MinPrice = "min_price",
 }
 
 /**
  * Defines the possible types of asset events that can take place
  */
 export enum AssetEventType {
-  AuctionCreated = 'created',
-  AuctionSuccessful = 'successful',
-  AuctionCancelled = 'cancelled',
-  OfferEntered = 'offer_entered',
-  BidEntered = 'bid_entered',
-  BidWithdraw = 'bid_withdraw',
-  AssetTransfer = 'transfer',
-  AssetApprove = 'approve',
-  CompositionCreated = 'composition_created',
-  Custom = 'custom',
-  Payout = 'payout',
+  AuctionCreated = "created",
+  AuctionSuccessful = "successful",
+  AuctionCancelled = "cancelled",
+  OfferEntered = "offer_entered",
+  BidEntered = "bid_entered",
+  BidWithdraw = "bid_withdraw",
+  AssetTransfer = "transfer",
+  AssetApprove = "approve",
+  CompositionCreated = "composition_created",
+  Custom = "custom",
+  Payout = "payout",
 }
 
 /**
@@ -502,8 +511,8 @@ export interface OpenSeaAssetBundleJSON {
 /**
  * Query interface for Bundles
  */
-export interface OpenSeaAssetBundleQuery extends Partial<OpenSeaAssetBundleJSON> {
-
+export interface OpenSeaAssetBundleQuery
+  extends Partial<OpenSeaAssetBundleJSON> {
   asset_contract_address?: string
   token_ids?: Array<number | string>
   on_sale?: boolean
@@ -555,7 +564,9 @@ export interface ExchangeMetadataForBundle {
   referrerAddress?: string
 }
 
-export type ExchangeMetadata = ExchangeMetadataForAsset | ExchangeMetadataForBundle
+export type ExchangeMetadata =
+  | ExchangeMetadataForAsset
+  | ExchangeMetadataForBundle
 
 export interface UnhashedOrder extends WyvernOrder {
   feeMethod: FeeMethod
@@ -645,10 +656,10 @@ export interface OrderJSON extends Partial<ECSignature> {
  * full docs.
  */
 export interface OrderQuery extends Partial<OrderJSON> {
-  owner?: string,
-  sale_kind?: SaleKind,
-  asset_contract_address?: string,
-  payment_token_address?: string,
+  owner?: string
+  sale_kind?: SaleKind
+  asset_contract_address?: string
+  payment_token_address?: string
   is_english?: boolean
   is_expired?: boolean
   bundled?: boolean
@@ -680,7 +691,8 @@ export interface OpenSeaAssetQuery {
 /**
  * Query interface for Fungible Assets
  */
-export interface OpenSeaFungibleTokenQuery extends Partial<OpenSeaFungibleToken> {
+export interface OpenSeaFungibleTokenQuery
+  extends Partial<OpenSeaFungibleToken> {
   limit?: number
   offset?: number
   // Typescript bug requires this duplication

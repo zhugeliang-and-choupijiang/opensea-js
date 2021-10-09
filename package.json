@@ -1,6 +1,6 @@
 {
-  "name": "opensea-js",
-  "version": "1.2.0",
+  "name": "@timicool/opensea-js",
+  "version": "1.1.0",
   "description": "JavaScript SDK for the OpenSea marketplace. Let users buy or sell crypto collectibles and other cryptogoods, all on your own site!",
   "files": [
     "lib",
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ProjectOpenSea/opensea-js.git"
+    "url": "git+https://github.com/zhugeliang-and-choupijiang/opensea-js.git"
   },
   "keywords": [
     "marketplace",

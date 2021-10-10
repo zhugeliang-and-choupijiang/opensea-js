@@ -1,5 +1,6 @@
 _bundles/
 node_modules/
+docs/
 
 # Logs
 logs
@@ -63,4 +64,3 @@ typings/
 # next.js build output
 .next
 
-docs/

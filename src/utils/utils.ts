@@ -223,6 +223,7 @@ export const assetFromJSON = (asset: any): OpenSeaAsset => {
     tokenAddress: asset.asset_contract.address,
     name: asset.name,
     description: asset.description,
+    creator: asset.creator ? asset.creator : null,
     owner: asset.owner,
     assetContract: assetContractFromJSON(asset.asset_contract),
     collection: collectionFromJSON(asset.collection),
@@ -239,7 +240,8 @@ export const assetFromJSON = (asset: any): OpenSeaAsset => {
     imagePreviewUrl: asset.image_preview_url,
     imageUrlOriginal: asset.image_original_url,
     imageUrlThumbnail: asset.image_thumbnail_url,
-    imageBaseUrl: asset.image_url,
+    imageBaseUrl:
+      !isAnimated && !isSvg ? asset.image_url + "w=1920" : asset.image_url,
 
     externalLink: asset.external_link,
     openseaLink: asset.permalink,
@@ -800,9 +802,9 @@ export function estimateCurrentPrice(
     exactPrice =
       side == OrderSide.Sell
         ? /* Sell-side - start price: basePrice. End price: basePrice - extra. */
-          basePrice.minus(diff)
+        basePrice.minus(diff)
         : /* Buy-side - start price: basePrice. End price: basePrice + extra. */
-          basePrice.plus(diff)
+        basePrice.plus(diff)
   }
 
   // Add taker fee only for buyers

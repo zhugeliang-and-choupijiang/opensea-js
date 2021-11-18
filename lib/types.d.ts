@@ -252,6 +252,7 @@ export interface OpenSeaAsset extends Asset {
     collection: OpenSeaCollection;
     name: string;
     description: string;
+    creator: OpenSeaAccount;
     owner: OpenSeaAccount;
     orders: Order[] | null;
     buyOrders: Order[] | null;

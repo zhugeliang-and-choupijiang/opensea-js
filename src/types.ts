@@ -346,6 +346,8 @@ export interface OpenSeaAsset extends Asset {
   name: string
   // Description of the asset
   description: string
+  // creator of the asset
+  creator: OpenSeaAccount
   // Owner of the asset
   owner: OpenSeaAccount
   // Orders on the asset. Null if asset was fetched in a list

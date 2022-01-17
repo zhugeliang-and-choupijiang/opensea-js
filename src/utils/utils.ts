@@ -241,7 +241,7 @@ export const assetFromJSON = (asset: any): OpenSeaAsset => {
     imageUrlOriginal: asset.image_original_url,
     imageUrlThumbnail: asset.image_thumbnail_url,
     imageBaseUrl:
-      !isAnimated && !isSvg ? asset.image_url + "w=1920" : asset.image_url,
+      !isAnimated && !isSvg ? asset.image_url : asset.image_url,
 
     externalLink: asset.external_link,
     openseaLink: asset.permalink,
@@ -439,6 +439,8 @@ export const orderFromJSON = (order: any): Order => {
     createdTime: new BigNumber(Math.round(createdDate.getTime() / 1000)),
     listingTime: new BigNumber(order.listing_time),
     expirationTime: new BigNumber(order.expiration_time),
+    closeDate: order.closing_date,
+    id: order.id,
 
     salt: new BigNumber(order.salt),
     v: parseInt(order.v),
@@ -495,6 +497,8 @@ export const orderToJSON = (order: Order): OrderJSON => {
     listingTime: order.listingTime.toString(),
     expirationTime: order.expirationTime.toString(),
     salt: order.salt.toString(),
+    closingDate: order.closeDate,
+    id: order.id,
 
     metadata: order.metadata,
 

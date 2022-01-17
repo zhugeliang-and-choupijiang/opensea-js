@@ -606,6 +606,8 @@ export interface Order extends UnsignedOrder, Partial<ECSignature> {
   markedInvalid?: boolean
   asset?: OpenSeaAsset
   assetBundle?: OpenSeaAssetBundle
+  closeDate?: string
+  id?: number
 }
 
 /**
@@ -643,6 +645,8 @@ export interface OrderJSON extends Partial<ECSignature> {
   createdTime?: number | string
   listingTime: number | string
   expirationTime: number | string
+  closingDate: string | undefined
+  id: number | undefined
 
   salt: string
 

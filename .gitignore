@@ -1,6 +1,6 @@
 _bundles/
 node_modules/
-docs/
+lib/
 
 # Logs
 logs
@@ -64,3 +64,8 @@ typings/
 # next.js build output
 .next
 
+lib
+
+docs
+
+.DS_Store
